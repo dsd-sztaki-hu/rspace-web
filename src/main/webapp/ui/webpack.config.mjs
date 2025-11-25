@@ -99,7 +99,7 @@ const config = {
       analyzerMode: Boolean(process.env.FRONTEND_BUILD_STATS)
         ? "server"
         : "disabled",
-      generateStatsFile: true,
+      generateStatsFile: Boolean(process.env.FRONTEND_BUILD_STATS),
     }),
   ],
   optimization: {
