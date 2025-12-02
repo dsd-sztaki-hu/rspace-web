@@ -1,0 +1,52 @@
+# Pull request configuration
+pull-request:
+  title: "🌐 Update translations"
+  body: |
+    This PR contains updated translations from SimpleLocalize.
+
+    Please review the changes before merging.
+  labels:
+    - "translations"
+    - "i18n"
+
+# Upload configuration
+upload:
+  when:
+    push:
+      branches:
+        - "localisation"
+  files:
+    - path: "src/main/resources/bundles/{ns}/{ns}.properties"
+      format: "java-properties"
+      language-key: "en"
+      tags:
+        - "frontend"
+      options:
+        - REPLACE_TRANSLATION_IF_FOUND
+        - TRIM_LEADING_AND_TRAILING_WHITESPACES
+    - path: "src/main/resources/bundles/{ns}.properties"
+      format: "java-properties"
+      language-key: "en"
+      tags:
+        - "frontend"
+      options:
+        - REPLACE_TRANSLATION_IF_FOUND
+        - TRIM_LEADING_AND_TRAILING_WHITESPACES
+
+# Download configuration
+download:
+  files:
+    - path: "src/main/resources/bundles/{ns}_{lang}.properties"
+      format: "java-properties"
+      sort: "IMPORT_ORDER"
+      tags:
+        - "frontend"
+      language-keys:
+        - "hu"
+    - path: "src/main/resources/bundles/{ns}/{ns}_{lang}.properties"
+      format: "java-properties"
+      sort: "IMPORT_ORDER"
+      tags:
+        - "frontend"
+      language-keys:
+        - "hu"        
