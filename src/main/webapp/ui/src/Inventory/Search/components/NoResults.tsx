@@ -5,6 +5,7 @@ import { darken, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import type React from "react";
 import NoResultsSvg from "@/assets/graphics/NoResults.svg";
+import { useI18n } from "@/i18n/I18nContext";
 import docLinks from "../../../assets/DocLinks";
 
 type NoResultsArgs = {
@@ -13,6 +14,7 @@ type NoResultsArgs = {
 
 function NoResults({ query }: NoResultsArgs): React.ReactNode {
   const theme = useTheme();
+  const { t } = useI18n();
   return (
     <Box
       sx={{
@@ -35,7 +37,7 @@ function NoResults({ query }: NoResultsArgs): React.ReactNode {
         }}
       />
       <Typography variant="inherit" component="span" sx={{ color: darken(theme.palette.primary.main, 0.2) }}>
-        No results.
+        {t("inventory.search.noResults", "No results.")}
       </Typography>
       <Typography
         sx={{
@@ -46,7 +48,10 @@ function NoResults({ query }: NoResultsArgs): React.ReactNode {
           maxWidth: "20em",
         }}
       >
-        Try searching for a different term, or use the advanced search to change search filters.
+        {t(
+          "inventory.search.noResultsSuggestion",
+          "Try searching for a different term, or use the advanced search to change search filters.",
+        )}
       </Typography>
       {query !== "" && (
         <>

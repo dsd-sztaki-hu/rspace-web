@@ -10,6 +10,7 @@ import { ACCENT_COLOR as INVENTORY_COLOR } from "./assets/branding/rspace/invent
 import Analytics from "./components/Analytics";
 import { ERROR_MSG } from "./components/ErrorBoundary";
 import GoogleLoginProvider from "./components/GoogleLoginProvider";
+import { I18nProvider } from "./i18n/I18nContext";
 import Router from "./Router";
 import useStores from "./stores/use-stores";
 
@@ -43,7 +44,9 @@ function App(): React.ReactNode {
           <ThemeProvider theme={createAccentedTheme(INVENTORY_COLOR)}>
             <QueryClientProvider client={queryClient}>
               <Analytics>
-                <Router />
+                <I18nProvider>
+                  <Router />
+                </I18nProvider>
               </Analytics>
             </QueryClientProvider>
           </ThemeProvider>
