@@ -1,12 +1,14 @@
 import type React from "react";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, Fragment, useContext, useEffect, useMemo, useState } from "react";
 import ElnApiService from "@/common/ElnApiService";
 
 type I18nMessages = Record<string, string>;
 
 type TranslationValues = Record<string, string | number | boolean | null | undefined>;
+type RichTranslationValues = Record<string, React.ReactNode>;
 
-export type Translate = (key: string, fallback?: string, values?: TranslationValues) => string;
+export type Translate = (key: string, values?: TranslationValues) => string;
+export type TranslateNode = (key: string, values?: RichTranslationValues) => React.ReactNode;
 
 export type ApiI18nCatalog = {
   locale: string;
@@ -19,6 +21,7 @@ type I18nContextValue = {
   loading: boolean;
   messages: I18nMessages;
   t: Translate;
+  tNode: TranslateNode;
 };
 
 type I18nProviderArgs = {
@@ -56,13 +59,43 @@ function interpolate(message: string, values?: TranslationValues): string {
   });
 }
 
-const fallbackTranslate: Translate = (key, fallback, values) => interpolate(fallback ?? key, values);
+function interpolateNode(message: string, values?: RichTranslationValues): React.ReactNode {
+  if (!values) {
+    return message;
+  }
+
+  const nodes: Array<React.ReactNode> = [];
+  const placeholderPattern = /\{([A-Za-z0-9_]+)\}/g;
+  let lastIndex = 0;
+  let match = placeholderPattern.exec(message);
+
+  while (match !== null) {
+    const [placeholder, key] = match;
+    if (match.index > lastIndex) {
+      nodes.push(message.slice(lastIndex, match.index));
+    }
+
+    nodes.push(<Fragment key={`${key}-${match.index}`}>{values[key] ?? placeholder}</Fragment>);
+    lastIndex = match.index + placeholder.length;
+    match = placeholderPattern.exec(message);
+  }
+
+  if (lastIndex < message.length) {
+    nodes.push(message.slice(lastIndex));
+  }
+
+  return nodes.length === 1 ? nodes[0] : nodes;
+}
+
+const fallbackTranslate: Translate = (key, values) => interpolate(key, values);
+const fallbackTranslateNode: TranslateNode = (key, values) => interpolateNode(key, values);
 
 const I18nContext = createContext<I18nContextValue>({
   locale: emptyCatalog.locale,
   loading: false,
   messages: emptyCatalog.messages,
   t: fallbackTranslate,
+  tNode: fallbackTranslateNode,
 });
 
 export function I18nProvider({
@@ -111,12 +144,14 @@ export function I18nProvider({
   }, [loadCatalog, loadOnMount, namespacesKey]);
 
   const value = useMemo<I18nContextValue>(() => {
-    const t: Translate = (key, fallback, values) => interpolate(catalog.messages[key] ?? fallback ?? key, values);
+    const t: Translate = (key, values) => interpolate(catalog.messages[key] ?? key, values);
+    const tNode: TranslateNode = (key, values) => interpolateNode(catalog.messages[key] ?? key, values);
     return {
       locale: catalog.locale,
       loading,
       messages: catalog.messages,
       t,
+      tNode,
     };
   }, [catalog, loading]);
 

@@ -14,7 +14,7 @@ type NoResultsArgs = {
 
 function NoResults({ query }: NoResultsArgs): React.ReactNode {
   const theme = useTheme();
-  const { t } = useI18n();
+  const { t, tNode } = useI18n();
   return (
     <Box
       sx={{
@@ -37,7 +37,7 @@ function NoResults({ query }: NoResultsArgs): React.ReactNode {
         }}
       />
       <Typography variant="inherit" component="span" sx={{ color: darken(theme.palette.primary.main, 0.2) }}>
-        {t("inventory.search.noResults", "No results.")}
+        {t("inventory.search.noResults")}
       </Typography>
       <Typography
         sx={{
@@ -48,10 +48,7 @@ function NoResults({ query }: NoResultsArgs): React.ReactNode {
           maxWidth: "20em",
         }}
       >
-        {t(
-          "inventory.search.noResultsSuggestion",
-          "Try searching for a different term, or use the advanced search to change search filters.",
-        )}
+        {t("inventory.search.noResultsSuggestion")}
       </Typography>
       {query !== "" && (
         <>
@@ -65,15 +62,22 @@ function NoResults({ query }: NoResultsArgs): React.ReactNode {
               maxWidth: "20em",
             }}
           >
-            For more information on using Lucene queries, see{" "}
-            <Link href={docLinks.luceneSyntax} rel="noreferrer" target="_blank">
-              advanced search
-            </Link>{" "}
-            and the related{" "}
-            <Link href="https://lucene.apache.org/core/2_9_4/queryparsersyntax.html" rel="noreferrer" target="_blank">
-              Apache page
-            </Link>
-            .
+            {tNode("inventory.search.luceneHelp", {
+              advancedSearchLink: (
+                <Link href={docLinks.luceneSyntax} rel="noreferrer" target="_blank">
+                  {t("inventory.search.luceneHelp.advancedSearchLink")}
+                </Link>
+              ),
+              apacheLink: (
+                <Link
+                  href="https://lucene.apache.org/core/2_9_4/queryparsersyntax.html"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {t("inventory.search.luceneHelp.apacheLink")}
+                </Link>
+              ),
+            })}
           </Typography>
         </>
       )}
