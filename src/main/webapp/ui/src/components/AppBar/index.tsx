@@ -34,6 +34,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { I18nProvider, useI18n } from "@/i18n/I18nContext";
 import type { Person } from "@/stores/definitions/Person";
 import { ACCENT_COLOR as GALLERY_COLOR } from "../../assets/branding/rspace/gallery";
 import { ACCENT_COLOR as INVENTORY_COLOR } from "../../assets/branding/rspace/inventory";
@@ -73,6 +74,7 @@ declare global {
   }
 }
 const NotificationCounter = ({ currentUser }: { currentUser: Person }) => {
+  const { t } = useI18n();
   const { notificationCount, messageCount, specialMessageCount } = useWebSocketNotifications(`${currentUser.id}`);
   return (
     <Box
@@ -82,7 +84,7 @@ const NotificationCounter = ({ currentUser }: { currentUser: Person }) => {
       role="status"
       aria-live="polite"
       aria-relevant="text"
-      aria-label="notifications and messages"
+      aria-label={t("ApplicationResources.appBar.notificationsAndMessagesAriaLabel")}
     >
       <Badge
         badgeContent={notificationCount + messageCount + specialMessageCount}
@@ -107,7 +109,7 @@ const NotificationCounter = ({ currentUser }: { currentUser: Person }) => {
               <NotificationsNoneIcon />
             )
           }
-          title="Notifications"
+          title={t("ApplicationResources.appBar.notificationsTitle")}
         />
       </Badge>
     </Box>
@@ -116,7 +118,7 @@ const NotificationCounter = ({ currentUser }: { currentUser: Person }) => {
 const IncomingMaintenancePopup = ({ startDate }: { startDate: Date }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const popoverId = React.useId();
-
+  const { t } = useI18n();
   /*
    * On the non-react parts of the product, the app bar is rendered inside of a
    * shadow root to prevent the styles of the app bar from leaking into the
@@ -131,7 +133,7 @@ const IncomingMaintenancePopup = ({ startDate }: { startDate: Date }) => {
         onClick={(e) => {
           setAnchorEl(e.currentTarget);
         }}
-        aria-label={`A scheduled maintenance window begins ${getRelativeTime(startDate)}.`}
+        aria-label={t("ApplicationResources.appBar.maintenanceAriaLabel", { relativeTime: getRelativeTime(startDate) })}
         aria-controls={popoverId}
         aria-haspopup="dialog"
         color="error"
@@ -164,7 +166,8 @@ const IncomingMaintenancePopup = ({ startDate }: { startDate: Date }) => {
           {/*
            * We show a relative time here rather than an absolute time to avoid
            * the need to take into account the user's timezone.
-           */}A scheduled maintenance window begins {getRelativeTime(startDate)}.
+           */}
+          {t("ApplicationResources.appBar.maintenanceMessage", { relativeTime: getRelativeTime(startDate) })}
         </Typography>
       </Popover>
     </div>
@@ -334,6 +337,7 @@ function GalleryAppBar({
   const { isViewportSmall } = useViewportDimensions();
   const uiNavigationData = useUiNavigationData();
   const [appMenuAnchorEl, setAppMenuAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { t, tNode } = useI18n();
   function handleAppMenuClose() {
     setAppMenuAnchorEl(null);
   }
@@ -365,7 +369,14 @@ function GalleryAppBar({
    */
   const isTabbedPage = ["Workspace", "Gallery", "Inventory", "System", "My RSpace"].includes(currentPage);
   return (
-    <AppBar position="relative" aria-label={variant === "page" ? "page header" : "dialog header"}>
+    <AppBar
+      position="relative"
+      aria-label={
+        variant === "page"
+          ? t("ApplicationResources.appBar.pageHeaderAriaLabel")
+          : t("ApplicationResources.appBar.dialogHeaderAriaLabel")
+      }
+    >
       <Toolbar variant="dense">
         {variant === "page" && !isViewportSmall && (
           <>
@@ -415,7 +426,7 @@ function GalleryAppBar({
                   <img
                     key="branding small"
                     src={href}
-                    alt="branding"
+                    alt={t("ApplicationResources.appBar.brandingAlt")}
                     style={{
                       height: "100%",
                     }}
@@ -468,17 +479,17 @@ function GalleryAppBar({
               mx: 1,
             }}
             component="nav"
-            aria-label="main links"
+            aria-label={t("ApplicationResources.appBar.mainLinksAriaLabel")}
           >
             <Link target="_self" aria-current={currentPage === "Workspace" ? "page" : false} href="/workspace">
-              Workspace
+              {t("ApplicationResources.appBar.workspace")}
             </Link>
             <Link target="_self" aria-current={currentPage === "Gallery" ? "page" : false} href="/gallery">
-              Gallery
+              {t("ApplicationResources.appBar.gallery")}
             </Link>
             {showInventory && (
               <Link target="_self" aria-current={currentPage === "Inventory" ? "page" : false} href="/inventory">
-                Inventory
+                {t("ApplicationResources.appBar.inventory")}
               </Link>
             )}
             <Link
@@ -486,11 +497,11 @@ function GalleryAppBar({
               aria-current={currentPage === "My RSpace" ? "page" : false}
               href={showMyLabGroups ? "/groups/viewPIGroup" : "/userform"}
             >
-              My RSpace
+              {t("ApplicationResources.appBar.myRspace")}
             </Link>
             {showSystem && (
               <Link target="_self" aria-current={currentPage === "System" ? "page" : false} href="/system">
-                System
+                {t("ApplicationResources.appBar.system")}
               </Link>
             )}
           </Stack>
@@ -499,7 +510,7 @@ function GalleryAppBar({
           <>
             <List
               component="nav"
-              aria-label="Main Navigation"
+              aria-label={t("ApplicationResources.appBar.mainNavigationAriaLabel")}
               disablePadding
               sx={{
                 ml: 1,
@@ -519,7 +530,7 @@ function GalleryAppBar({
                   setAppMenuAnchorEl(event.currentTarget);
                 }}
               >
-                <ListItemText primary={isTabbedPage ? currentPage : "Go to..."} />
+                <ListItemText primary={isTabbedPage ? currentPage : t("ApplicationResources.appBar.goTo")} />
                 <ListItemIcon>
                   <ArrowDropDownIcon />
                 </ListItemIcon>
@@ -557,9 +568,9 @@ function GalleryAppBar({
               }}
             >
               <AccentMenuItem
-                title="Workspace"
+                title={t("ApplicationResources.appBar.workspaceTitle")}
                 avatar={<NotebookIcon />}
-                subheader="Notebooks and documents"
+                subheader={t("ApplicationResources.appBar.workspaceSubheader")}
                 foregroundColor={WORKSPACE_COLOR.contrastText}
                 backgroundColor={WORKSPACE_COLOR.main}
                 onClick={() => {
@@ -569,9 +580,9 @@ function GalleryAppBar({
                 current={currentPage === "Workspace" ? "page" : false}
               />
               <AccentMenuItem
-                title="Gallery"
+                title={t("ApplicationResources.appBar.galleryTitle")}
                 avatar={<FileIcon />}
-                subheader="Your files in RSpace and connected filestores"
+                subheader={t("ApplicationResources.appBar.gallerySubheader")}
                 foregroundColor={GALLERY_COLOR.contrastText}
                 backgroundColor={GALLERY_COLOR.main}
                 onClick={() => {
@@ -582,9 +593,9 @@ function GalleryAppBar({
               />
               {showInventory && (
                 <AccentMenuItem
-                  title="Inventory"
+                  title={t("ApplicationResources.appBar.inventoryTitle")}
                   avatar={<FlaskIcon />}
-                  subheader="Samples and laboratory resources"
+                  subheader={t("ApplicationResources.appBar.inventorySubheader")}
                   foregroundColor={INVENTORY_COLOR.contrastText}
                   backgroundColor={INVENTORY_COLOR.main}
                   onClick={() => {
@@ -595,9 +606,9 @@ function GalleryAppBar({
                 />
               )}
               <AccentMenuItem
-                title="My RSpace"
+                title={t("ApplicationResources.appBar.myRspaceTitle")}
                 avatar={<ProfileIcon />}
-                subheader="Your profile details, labgroups, and preferences"
+                subheader={t("ApplicationResources.appBar.myRspaceSubheader")}
                 foregroundColor={OTHER_COLOR.contrastText}
                 backgroundColor={OTHER_COLOR.main}
                 onClick={() => {
@@ -608,9 +619,9 @@ function GalleryAppBar({
               />
               {showSystem && (
                 <AccentMenuItem
-                  title="System"
+                  title={t("ApplicationResources.appBar.systemTitle")}
                   avatar={<SystemIcon />}
-                  subheader="System administration"
+                  subheader={t("ApplicationResources.appBar.systemSubheader")}
                   foregroundColor={SYSADMIN_COLOR.contrastText}
                   backgroundColor={SYSADMIN_COLOR.main}
                   onClick={() => {
@@ -650,7 +661,7 @@ function GalleryAppBar({
                   setAccountMenuAnchorEl(event.currentTarget);
                 }}
                 icon={<DynamicAvatar uiNavigationData={uiNavigationData} size="small" />}
-                title="Account Menu"
+                title={t("ApplicationResources.appBar.accountMenuTitle")}
                 id="account-menu-button"
                 aria-haspopup="menu"
                 aria-controls="account-menu"
@@ -700,7 +711,10 @@ function GalleryAppBar({
                   loading: () => null,
                   error: (errorMsg) => (
                     <ListItem>
-                      <ListItemText primary="Error loading your details" secondary={errorMsg} />
+                      <ListItemText
+                        primary={t("ApplicationResources.appBar.errorLoadingYourDetailsPrimary")}
+                        secondary={errorMsg}
+                      />
                     </ListItem>
                   ),
                   success: ({ userDetails }) => (
@@ -731,7 +745,7 @@ function GalleryAppBar({
                                 .flatMap(Parsers.isTrue)
                                 .map(() => (
                                   <>
-                                    <strong>Operating as:</strong>
+                                    <strong>{t("ApplicationResources.appBar.operatingAs")}</strong>
                                     <br />
                                   </>
                                 ))
@@ -752,9 +766,9 @@ function GalleryAppBar({
                             }}
                             primary={
                               userDetails.orcidId === null ? (
-                                <>
-                                  Add an ORCID iD to your <Link href="/userform">profile</Link>.
-                                </>
+                                tNode("ApplicationResources.appBar.addOrcidIdToProfile", {
+                                  profileLink: <Link href="/userform">{t("ApplicationResources.appBar.profile")}</Link>,
+                                })
                               ) : (
                                 <Stack
                                   direction="row"
@@ -788,7 +802,7 @@ function GalleryAppBar({
                   ),
                 })}
                 <AccentMenuItem
-                  title="Messaging"
+                  title={t("ApplicationResources.appBar.messagingTitle")}
                   avatar={<MessageIcon />}
                   compact
                   onClick={() => {
@@ -798,7 +812,7 @@ function GalleryAppBar({
                   href="/dashboard"
                 />
                 <AccentMenuItem
-                  title="Apps"
+                  title={t("ApplicationResources.appBar.appsTitle")}
                   avatar={<AppsIcon />}
                   compact
                   onClick={() => {
@@ -813,7 +827,7 @@ function GalleryAppBar({
                   .map(() => (
                     <AccentMenuItem
                       key="published"
-                      title="Published"
+                      title={t("ApplicationResources.appBar.publishedTitle")}
                       avatar={<PublicIcon />}
                       compact
                       onClick={(e) => {
@@ -833,7 +847,7 @@ function GalleryAppBar({
                   }}
                 />
                 <AccentMenuItem
-                  title="About RSpace"
+                  title={t("ApplicationResources.appBar.aboutRspaceTitle")}
                   avatar={<InfoIcon />}
                   compact
                   onClick={() => {
@@ -847,7 +861,7 @@ function GalleryAppBar({
                   .map(() => (
                     <AccentMenuItem
                       key="release"
-                      title="Release"
+                      title={t("ApplicationResources.appBar.releaseTitle")}
                       avatar={<LogoutIcon />}
                       backgroundColor={lighten(theme.palette.error.light, 0.5)}
                       foregroundColor={darken(theme.palette.error.dark, 0.3)}
@@ -861,7 +875,7 @@ function GalleryAppBar({
                   ))
                   .orElse(
                     <AccentMenuItem
-                      title="Log Out"
+                      title={t("ApplicationResources.appBar.logOutTitle")}
                       avatar={<LogoutIcon />}
                       backgroundColor={lighten(theme.palette.error.light, 0.5)}
                       foregroundColor={darken(theme.palette.error.dark, 0.3)}
@@ -903,7 +917,7 @@ function GalleryAppBar({
                     >
                       <img
                         src={bannerImgSrc}
-                        alt="branding"
+                        alt={t("ApplicationResources.appBar.brandingAlt")}
                         style={{
                           maxWidth: "120px",
                           display: "block",
@@ -951,4 +965,20 @@ function GalleryAppBar({
 /**
  * GalleryAppBar is the header bar for the gallery page.
  */
-export default observer(GalleryAppBar);
+const ObservedGalleryAppBar = observer(GalleryAppBar);
+
+function I18nAwareGalleryAppBar(props: GalleryAppBarArgs): React.ReactNode {
+  const { providerPresent } = useI18n();
+
+  if (providerPresent) {
+    return <ObservedGalleryAppBar {...props} />;
+  }
+
+  return (
+    <I18nProvider>
+      <ObservedGalleryAppBar {...props} />
+    </I18nProvider>
+  );
+}
+
+export default I18nAwareGalleryAppBar;

@@ -55,6 +55,48 @@ export function uiNavigationData(visibleTabs: Partial<VisibleTabs> = {}) {
  * order, so a catch-all registered first would intercept your specific stubs.
  */
 export function stubAppChrome(mockAxios: MockAdapter, options: { visibleTabs?: Partial<VisibleTabs> } = {}): void {
+  mockAxios.onGet("/i18n/ajax/catalog").reply(200, {
+    locale: "en",
+    namespaces: [],
+    messages: {
+      "ApplicationResources.appBar.notificationsAndMessagesAriaLabel": "notifications and messages",
+      "ApplicationResources.appBar.notificationsTitle": "Notifications",
+      "ApplicationResources.appBar.maintenanceAriaLabel": "A scheduled maintenance window begins {relativeTime}.",
+      "ApplicationResources.appBar.maintenanceMessage": "A scheduled maintenance window begins {relativeTime}.",
+      "ApplicationResources.appBar.pageHeaderAriaLabel": "page header",
+      "ApplicationResources.appBar.dialogHeaderAriaLabel": "dialog header",
+      "ApplicationResources.appBar.brandingAlt": "branding",
+      "ApplicationResources.appBar.mainLinksAriaLabel": "main links",
+      "ApplicationResources.appBar.workspace": "Workspace",
+      "ApplicationResources.appBar.gallery": "Gallery",
+      "ApplicationResources.appBar.inventory": "Inventory",
+      "ApplicationResources.appBar.myRspace": "My RSpace",
+      "ApplicationResources.appBar.system": "System",
+      "ApplicationResources.appBar.mainNavigationAriaLabel": "Main Navigation",
+      "ApplicationResources.appBar.goTo": "Go to...",
+      "ApplicationResources.appBar.workspaceTitle": "Workspace",
+      "ApplicationResources.appBar.workspaceSubheader": "Notebooks and documents",
+      "ApplicationResources.appBar.galleryTitle": "Gallery",
+      "ApplicationResources.appBar.gallerySubheader": "Your files in RSpace and connected filestores",
+      "ApplicationResources.appBar.inventoryTitle": "Inventory",
+      "ApplicationResources.appBar.inventorySubheader": "Samples and laboratory resources",
+      "ApplicationResources.appBar.myRspaceTitle": "My RSpace",
+      "ApplicationResources.appBar.myRspaceSubheader": "Your profile details, labgroups, and preferences",
+      "ApplicationResources.appBar.systemTitle": "System",
+      "ApplicationResources.appBar.systemSubheader": "System administration",
+      "ApplicationResources.appBar.accountMenuTitle": "Account Menu",
+      "ApplicationResources.appBar.errorLoadingYourDetailsPrimary": "Error loading your details",
+      "ApplicationResources.appBar.operatingAs": "Operating as:",
+      "ApplicationResources.appBar.addOrcidIdToProfile": "Add an ORCID iD to your {profileLink}.",
+      "ApplicationResources.appBar.profile": "profile",
+      "ApplicationResources.appBar.messagingTitle": "Messaging",
+      "ApplicationResources.appBar.appsTitle": "Apps",
+      "ApplicationResources.appBar.publishedTitle": "Published",
+      "ApplicationResources.appBar.aboutRspaceTitle": "About RSpace",
+      "ApplicationResources.appBar.releaseTitle": "Release",
+      "ApplicationResources.appBar.logOutTitle": "Log Out",
+    },
+  });
   mockAxios.onGet("/userform/ajax/inventoryOauthToken").reply(200, { data: STUB_JWT });
   mockAxios.onGet("/session/ajax/livechatProperties").reply(200, { livechatEnabled: false });
   mockAxios.onGet("/api/v1/userDetails/uiNavigationData").reply(200, uiNavigationData(options.visibleTabs));

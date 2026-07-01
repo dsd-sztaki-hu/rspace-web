@@ -12,6 +12,7 @@ import Analytics from "../components/Analytics";
 import AppBar from "../components/AppBar";
 import { DialogBoundary } from "../components/DialogBoundary";
 import ErrorBoundary from "../components/ErrorBoundary";
+import { I18nProvider } from "../i18n/I18nContext";
 
 const queryClient = new QueryClient();
 
@@ -43,20 +44,22 @@ window.addEventListener("load", () => {
       <CacheProvider value={cache}>
         <QueryClientProvider client={queryClient}>
           <Analytics>
-            <ErrorBoundary>
-              <CssBaseline />
-              <ThemeProvider theme={createAccentedTheme(color(currentPage()))}>
-                <Box sx={{ fontSize: "1rem", lineHeight: "1.5" }}>
-                  {/*
-                   * We use a DialogBoundary to keep the menu inside the shadow DOM
-                   */}
-                  <DialogBoundary>
-                    <AppBar variant="page" currentPage={currentPage()} accessibilityTips={{}} />
-                  </DialogBoundary>
-                </Box>
-                <Box sx={{ height: "30px" }}></Box>
-              </ThemeProvider>
-            </ErrorBoundary>
+            <I18nProvider>
+              <ErrorBoundary>
+                <CssBaseline />
+                <ThemeProvider theme={createAccentedTheme(color(currentPage()))}>
+                  <Box sx={{ fontSize: "1rem", lineHeight: "1.5" }}>
+                    {/*
+                     * We use a DialogBoundary to keep the menu inside the shadow DOM
+                     */}
+                    <DialogBoundary>
+                      <AppBar variant="page" currentPage={currentPage()} accessibilityTips={{}} />
+                    </DialogBoundary>
+                  </Box>
+                  <Box sx={{ height: "30px" }}></Box>
+                </ThemeProvider>
+              </ErrorBoundary>
+            </I18nProvider>
           </Analytics>
         </QueryClientProvider>
       </CacheProvider>
