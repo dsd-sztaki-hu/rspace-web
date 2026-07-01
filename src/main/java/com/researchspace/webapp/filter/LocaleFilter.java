@@ -38,14 +38,7 @@ public class LocaleFilter extends OncePerRequestFilter {
     Locale preferredLocale = null;
 
     if (locale != null) {
-      int indexOfUnderscore = locale.indexOf('_');
-      if (indexOfUnderscore != -1) {
-        String language = locale.substring(0, indexOfUnderscore);
-        String country = locale.substring(indexOfUnderscore + 1);
-        preferredLocale = new Locale(language, country);
-      } else {
-        preferredLocale = new Locale(locale);
-      }
+      preferredLocale = Locale.forLanguageTag(locale.replace('_', '-'));
     }
 
     HttpSession session = request.getSession(false);
@@ -57,11 +50,11 @@ public class LocaleFilter extends OncePerRequestFilter {
         session.setAttribute(Constants.PREFERRED_LOCALE_KEY, preferredLocale);
         Config.set(session, Config.FMT_LOCALE, preferredLocale);
       }
+    }
 
-      if (preferredLocale != null && !(request instanceof LocaleRequestWrapper)) {
-        request = new LocaleRequestWrapper(request, preferredLocale);
-        LocaleContextHolder.setLocale(preferredLocale);
-      }
+    if (preferredLocale != null && !(request instanceof LocaleRequestWrapper)) {
+      request = new LocaleRequestWrapper(request, preferredLocale);
+      LocaleContextHolder.setLocale(preferredLocale);
     }
 
     String theme = request.getParameter("theme");

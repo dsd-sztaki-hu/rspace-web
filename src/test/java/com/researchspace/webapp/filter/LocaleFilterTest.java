@@ -2,6 +2,7 @@ package com.researchspace.webapp.filter;
 
 import com.researchspace.Constants;
 import java.util.Locale;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
 import junit.framework.TestCase;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -21,14 +22,18 @@ public class LocaleFilterTest extends TestCase {
   public void testSetLocaleInSessionWhenSessionIsNull() throws Exception {
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addParameter("locale", "es");
+    Locale[] downstreamLocale = new Locale[1];
 
     MockHttpServletResponse response = new MockHttpServletResponse();
-    filter.doFilter(request, response, new MockFilterChain());
+    filter.doFilter(
+        request,
+        response,
+        (servletRequest, servletResponse) ->
+            downstreamLocale[0] = ((HttpServletRequest) servletRequest).getLocale());
 
     // no session, should result in null
     assertNull(request.getSession().getAttribute(Constants.PREFERRED_LOCALE_KEY));
-    // thread locale should always have it, regardless of session
-    assertNotNull(LocaleContextHolder.getLocale());
+    assertEquals(new Locale("es"), downstreamLocale[0]);
   }
 
   public void testSetLocaleInSessionWhenSessionNotNull() throws Exception {
@@ -84,5 +89,21 @@ public class LocaleFilterTest extends TestCase {
     Locale locale = (Locale) request.getSession().getAttribute(Constants.PREFERRED_LOCALE_KEY);
     assertNotNull(locale);
     assertEquals(new Locale("zh", "TW"), locale);
+  }
+
+  public void testLocaleParameterOverridesBrowserLocaleWithoutSession() throws Exception {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    request.addPreferredLocale(Locale.forLanguageTag("hu-HU"));
+    request.addParameter("locale", "en");
+    Locale[] downstreamLocale = new Locale[1];
+
+    MockHttpServletResponse response = new MockHttpServletResponse();
+    filter.doFilter(
+        request,
+        response,
+        (servletRequest, servletResponse) ->
+            downstreamLocale[0] = ((HttpServletRequest) servletRequest).getLocale());
+
+    assertEquals(Locale.ENGLISH, downstreamLocale[0]);
   }
 }

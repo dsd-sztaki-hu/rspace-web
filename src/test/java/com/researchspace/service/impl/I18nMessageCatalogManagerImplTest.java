@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -21,9 +22,11 @@ class I18nMessageCatalogManagerImplTest {
   @TempDir private Path tempDir;
 
   private I18nMessageCatalogManagerImpl manager;
+  private Locale originalDefaultLocale;
 
   @BeforeEach
   void setUp() throws IOException {
+    originalDefaultLocale = Locale.getDefault();
     Path bundles = tempDir.resolve("bundles");
     Files.createDirectories(bundles.resolve("inventory"));
     Files.createDirectories(bundles.resolve("apps"));
@@ -51,11 +54,17 @@ class I18nMessageCatalogManagerImplTest {
         new ReloadableResourceBundleMessageSource();
     messageSource.setBasenames(basenames.toArray(String[]::new));
     messageSource.setDefaultEncoding("UTF-8");
+    messageSource.setFallbackToSystemLocale(false);
     messageSource.setUseCodeAsDefaultMessage(true);
 
     manager =
         new I18nMessageCatalogManagerImpl(messageSource, new DefaultResourceLoader(), basenames);
     manager.initialiseBundleNamespaces();
+  }
+
+  @AfterEach
+  void tearDown() {
+    Locale.setDefault(originalDefaultLocale);
   }
 
   @Test
@@ -71,10 +80,13 @@ class I18nMessageCatalogManagerImplTest {
 
   @Test
   void getCatalogFiltersByNamespace() {
+    Locale.setDefault(Locale.forLanguageTag("hu"));
+
     ApiI18nCatalog catalog = manager.getCatalog(Locale.ENGLISH, "inventory");
 
     assertEquals(List.of("inventory"), catalog.getNamespaces());
     assertEquals("No results", catalog.getMessages().get("inventory.search.noResults"));
+    assertFalse(catalog.getMessages().containsKey("inventory.search.placeholder"));
     assertFalse(catalog.getMessages().containsKey("common.save"));
     assertFalse(catalog.getMessages().containsKey("apps.title"));
   }
