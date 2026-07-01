@@ -1,6 +1,6 @@
 import type React from "react";
 import { createContext, Fragment, useContext, useEffect, useMemo, useState } from "react";
-import ElnApiService from "@/common/ElnApiService";
+import axios from "@/common/axios";
 
 type I18nMessages = Record<string, string>;
 
@@ -20,6 +20,7 @@ type I18nContextValue = {
   locale: string;
   loading: boolean;
   messages: I18nMessages;
+  providerPresent: boolean;
   t: Translate;
   tNode: TranslateNode;
 };
@@ -44,7 +45,7 @@ export async function fetchI18nCatalog(namespaces: ReadonlyArray<string>): Promi
     params.set("namespaces", namespaces.join(","));
   }
 
-  const { data } = await ElnApiService.query<ApiI18nCatalog>("i18n", params);
+  const { data } = await axios.get<ApiI18nCatalog>("/i18n/ajax/catalog", { params });
   return data;
 }
 
@@ -94,6 +95,7 @@ const I18nContext = createContext<I18nContextValue>({
   locale: emptyCatalog.locale,
   loading: false,
   messages: emptyCatalog.messages,
+  providerPresent: false,
   t: fallbackTranslate,
   tNode: fallbackTranslateNode,
 });
@@ -150,6 +152,7 @@ export function I18nProvider({
       locale: catalog.locale,
       loading,
       messages: catalog.messages,
+      providerPresent: true,
       t,
       tNode,
     };
