@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { createMuiCssLayerCache } from "@/components/MuiCssLayerProvider";
+import { I18nProvider, useI18n } from "@/i18n/I18nContext";
 import createAccentedTheme from "../../accentedTheme";
 import { ACCENT_COLOR as OTHER_COLOR } from "../../assets/branding/rspace/other";
 import Analytics from "../../components/Analytics";
@@ -42,30 +43,32 @@ window.addEventListener("load", () => {
     prepend: true,
     container: shadow,
   });
-
+  const { t } = useI18n();
   const root = createRoot(wrapper);
   root.render(
     <React.StrictMode>
       <CacheProvider value={cache}>
         <QueryClientProvider client={queryClient}>
           <Analytics>
-            <ErrorBoundary>
-              <CssBaseline />
-              <ThemeProvider theme={createAccentedTheme(OTHER_COLOR)}>
-                <Box sx={{ fontSize: "1rem", lineHeight: "1.5" }}>
-                  <DialogBoundary>
-                    <Container maxWidth="sm">
-                      <Box sx={{ py: 4 }}>
-                        <Typography variant="h4" component="h1" align="center" gutterBottom>
-                          About RSpace
-                        </Typography>
-                        <AboutRSpaceContent />
-                      </Box>
-                    </Container>
-                  </DialogBoundary>
-                </Box>
-              </ThemeProvider>
-            </ErrorBoundary>
+            <I18nProvider>
+              <ErrorBoundary>
+                <CssBaseline />
+                <ThemeProvider theme={createAccentedTheme(OTHER_COLOR)}>
+                  <Box sx={{ fontSize: "1rem", lineHeight: "1.5" }}>
+                    <DialogBoundary>
+                      <Container maxWidth="sm">
+                        <Box sx={{ py: 4 }}>
+                          <Typography variant="h4" component="h1" align="center" gutterBottom>
+                            {t("ApplicationResources.about.title")}
+                          </Typography>
+                          <AboutRSpaceContent />
+                        </Box>
+                      </Container>
+                    </DialogBoundary>
+                  </Box>
+                </ThemeProvider>
+              </ErrorBoundary>
+            </I18nProvider>
           </Analytics>
         </QueryClientProvider>
       </CacheProvider>
