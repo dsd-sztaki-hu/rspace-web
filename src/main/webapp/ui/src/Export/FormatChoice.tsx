@@ -30,13 +30,6 @@ type RepoUiConfig = Omit<Repo, "repoCfg"> & {
   options: Record<string, RepoOption>;
 };
 
-const WORD_ERRORS = [
-  "Word export is only available for a single document, and you have selected more than one.",
-  "Word export is only available for a single document, and you've selected a folder.",
-  "Word export is only available for a single document or notebook entry, and you've selected a Notebook.",
-  "All selected items are attachments — there are no RSpace documents to export.",
-];
-
 type FormatChoiceArgs = {
   exportConfigUpdate: {
     (key: "repoData", repos: ReadonlyArray<Repo>): void;
@@ -72,7 +65,12 @@ function FormatChoice({
   const [wordAvailable, setWordAvailable] = useState(false);
   const [wordAvailabilityMessage, setWordAvailabilityMessage] = useState("");
   const asposeEnabled = useDeploymentProperty("aspose.enabled");
-
+  const WORD_ERRORS = [
+    t("editor.export.formatChoice.wordError.moreThanOneDoc"),
+    t("editor.export.formatChoice.wordError.folder"),
+    t("editor.export.formatChoice.wordError.notebook"),
+    t("editor.export.formatChoice.wordError.attachments"),
+  ];
   const repoCheck = () => {
     const url = "/repository/ajax/repo/uiConfig";
 
