@@ -9,6 +9,7 @@ import { observer } from "mobx-react-lite";
 import type React from "react";
 import { useEffect, useState } from "react";
 import axios from "@/common/axios";
+import { useI18n } from "@/i18n/I18nContext";
 import { OptionExplanation, OptionHeading } from "../components/Inputs/RadioField";
 import { useDeploymentProperty } from "../hooks/api/useDeploymentProperty";
 import * as FetchingData from "../util/fetchingData";
@@ -65,6 +66,7 @@ function FormatChoice({
   fileStoresSelected,
   updateFileStores,
 }: FormatChoiceArgs): React.ReactNode {
+  const { t } = useI18n();
   const [msgBlockingRepoChoice, setMsgBlockingRepoChoice] = useState(Optional.present("Loading"));
   const [pdfAvailable, setPdfAvailable] = useState(false);
   const [wordAvailable, setWordAvailable] = useState(false);
@@ -80,9 +82,7 @@ function FormatChoice({
         const repos = response.data;
         if (!Array.isArray(repos)) throw new Error(repos.exceptionMessage);
         if (repos.length === 0) {
-          setMsgBlockingRepoChoice(
-            Optional.present("You have not setup a repository, to do so please activate them within Apps"),
-          );
+          setMsgBlockingRepoChoice(Optional.present(t("editor.export.formatChoice.noRepoSetup")));
           return;
         }
         setMsgBlockingRepoChoice(Optional.empty());
@@ -134,11 +134,7 @@ function FormatChoice({
         exportConfigUpdate("repoData", normalizedRepos);
       })
       .catch(() => {
-        setMsgBlockingRepoChoice(
-          Optional.present(
-            "Export to repository is not available because there was an error fetching repository configurations.",
-          ),
-        );
+        setMsgBlockingRepoChoice(Optional.present(t("editor.export.formatChoice.fetchingError")));
       });
   };
 
@@ -213,9 +209,9 @@ function FormatChoice({
 
   return (
     <Grid container>
-      <h3>Choose an appropriate format for your export</h3>
+      <h3>{t("editor.export.formatChoice.chooseAnAppropriateFormatForYour")}</h3>
       <RadioGroup
-        aria-label="Select Export"
+        aria-label={t("editor.export.formatChoice.selectExportAriaLabel")}
         name="exportType"
         value={archiveType}
         // @ts-expect-error TypeScript doesn't realise that the value can only be one of the ArchiveType values
@@ -227,9 +223,9 @@ function FormatChoice({
             control={<Radio data-test-id="zip-html" color="primary" />}
             label={
               <>
-                <OptionHeading>.ZIP bundle containing .HTML files</OptionHeading>
+                <OptionHeading>{t("editor.export.formatChoice.zipBundleContainingHtmlFiles")}</OptionHeading>
                 <OptionExplanation>
-                  Exported data, notebooks and attached files can be accessed offline with a browser.
+                  {t("editor.export.formatChoice.exportedDataNotebooksAndAttachedFiles")}
                 </OptionExplanation>
               </>
             }
@@ -239,10 +235,9 @@ function FormatChoice({
             control={<Radio data-test-id="zip-xml" color="primary" />}
             label={
               <>
-                <OptionHeading>.ZIP bundle containing .XML files</OptionHeading>
+                <OptionHeading>{t("editor.export.formatChoice.zipBundleContainingXmlFiles")}</OptionHeading>
                 <OptionExplanation>
-                  Exported data is machine readable. Good for archiving, or transferring data from one RSpace server or
-                  user to another.
+                  {t("editor.export.formatChoice.exportedDataIsMachineReadableGood")}
                 </OptionExplanation>
               </>
             }
@@ -253,15 +248,14 @@ function FormatChoice({
             control={<Radio data-test-id="pdf" color="primary" />}
             label={
               <>
-                <OptionHeading>PDF file</OptionHeading>
+                <OptionHeading>{t("editor.export.formatChoice.pdfFile")}</OptionHeading>
                 <OptionExplanation>
                   {pdfAvailable ? (
-                    <>
-                      A read-only version of your RSpace documents will be placed in the &apos;Exports&apos; area of the
-                      Gallery
-                    </>
+                    // biome-ignore lint/complexity/noUselessFragments: fragment keeps the prop typed as ReactNode
+                    <>{t("editor.export.formatChoice.aReadOnlyVersionOfYour")}</>
                   ) : (
-                    <>All selected items are attachments &mdash; there are no RSpace documents to export.</>
+                    // biome-ignore lint/complexity/noUselessFragments: fragment keeps the prop typed as ReactNode
+                    <>{t("editor.export.formatChoice.allSelectedItemsAreAttachmentsMdash")}</>
                   )}
                 </OptionExplanation>
               </>
@@ -272,10 +266,8 @@ function FormatChoice({
             control={<Radio data-test-id="zip-eln" color="primary" />}
             label={
               <>
-                <OptionHeading>RO-Crate</OptionHeading>
-                <OptionExplanation>
-                  An XML bundle with an RO-Crate metadata file, zipped into a .eln archive.
-                </OptionExplanation>
+                <OptionHeading>{t("editor.export.formatChoice.roCrate")}</OptionHeading>
+                <OptionExplanation>{t("editor.export.formatChoice.anXmlBundleWithAnRo")}</OptionExplanation>
               </>
             }
           />
@@ -286,13 +278,11 @@ function FormatChoice({
               control={<Radio data-test-id="doc" color="primary" />}
               label={
                 <>
-                  <OptionHeading>.DOC file</OptionHeading>
+                  <OptionHeading>{t("editor.export.formatChoice.docFile")}</OptionHeading>
                   <OptionExplanation>
                     {wordAvailable ? (
-                      <>
-                        MS Word version of your RSpace documents will be placed in the &apos;Exports&apos; area of the
-                        Gallery.
-                      </>
+                      // biome-ignore lint/complexity/noUselessFragments: fragment keeps the prop typed as ReactNode
+                      <>{t("editor.export.formatChoice.msWordVersionOfYourRspace")}</>
                     ) : (
                       wordAvailabilityMessage
                     )}
@@ -304,7 +294,7 @@ function FormatChoice({
         </Stack>
       </RadioGroup>
       <Typography variant="h6" component="h3" sx={{ marginTop: "20px" }}>
-        Choose additional destinations
+        {t("editor.export.formatChoice.chooseAdditionalDestinations")}
       </Typography>
       <Grid size={12}>
         <FormControlLabel
@@ -319,12 +309,12 @@ function FormatChoice({
               slotProps={{ input: { role: "checkbox" } }}
             />
           }
-          label={msgBlockingRepoChoice.orElse("Export to a repository")}
+          label={msgBlockingRepoChoice.orElse(t("editor.export.formatChoice.exportToRepo"))}
         />
       </Grid>
       {allowFileStores && (archiveType === "html" || archiveType === "xml" || archiveType === "eln") && (
         <Grid size={12}>
-          <h3>Filestores</h3>
+          <h3>{t("editor.export.formatChoice.filestores")}</h3>
           <FormControlLabel
             control={
               <Switch
@@ -339,13 +329,13 @@ function FormatChoice({
                 slotProps={{ input: { role: "checkbox" } }}
               />
             }
-            label="Include filestore links"
+            label={t("editor.export.formatChoice.includeFilestoreLinksLabel")}
           />
         </Grid>
       )}
       {(archiveType === "xml" || archiveType === "eln") && (
         <Grid size={12}>
-          <h3>Revisions</h3>
+          <h3>{t("editor.export.formatChoice.revisions")}</h3>
           <FormControlLabel
             control={
               <Switch
@@ -359,7 +349,7 @@ function FormatChoice({
                 slotProps={{ input: { role: "checkbox" } }}
               />
             }
-            label="Check to include all previous versions of your documents, or leave unchecked for only current version"
+            label={t("editor.export.formatChoice.checkToIncludeAllPreviousLabel")}
           />
         </Grid>
       )}

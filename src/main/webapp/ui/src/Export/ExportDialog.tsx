@@ -15,6 +15,7 @@ import React, { Suspense, startTransition, useEffect, useState } from "react";
 import axios from "@/common/axios";
 import { DEFAULT_STATE, type ExportConfig } from "@/Export/constants";
 import ExportDialogRaid from "@/Export/ExportDialogRaid";
+import { useI18n } from "@/i18n/I18nContext";
 import { useOauthTokenQuery } from "@/modules/common/hooks/auth";
 import type { GroupInfo } from "@/modules/groups/schema";
 import { useRaidIntegrationInfoAjaxQuery } from "@/modules/raid/queries";
@@ -67,6 +68,7 @@ const isArchiveExport = (archiveType: (typeof DEFAULT_STATE)["exportConfig"]["ar
 };
 
 function ExportDialog({ open, onClose, exportSelection, allowFileStores }: ExportDialogArgs): React.ReactNode {
+  const { t } = useI18n();
   const { data: token } = useOauthTokenQuery();
   const { addAlert } = React.useContext(AlertContext);
   const { isViewportSmall } = useViewportDimensions();
@@ -426,7 +428,7 @@ function ExportDialog({ open, onClose, exportSelection, allowFileStores }: Expor
             <LoadingFade loading={state.loading} />
             <DialogActions>
               <Button size="small" onClick={handleClose}>
-                Cancel
+                {t("editor.export.exportDialog.cancel")}
               </Button>
               <Divider orientation="vertical" sx={{ height: "2em" }} />
               <MobileStepper
@@ -447,7 +449,7 @@ function ExportDialog({ open, onClose, exportSelection, allowFileStores }: Expor
                     onClick={handleBack}
                     disabled={!activePane.prev}
                   >
-                    Back
+                    {t("editor.export.exportDialog.back")}
                   </Button>
                 }
                 nextButton={
@@ -459,7 +461,7 @@ function ExportDialog({ open, onClose, exportSelection, allowFileStores }: Expor
                     }}
                     disabled={state.exportConfig.archiveType === ""}
                   >
-                    {activePane.next ? "Next" : "Export"}
+                    {activePane.next ? t("editor.export.exportDialog.next") : t("editor.export.exportDialog.export")}
                   </Button>
                 }
               />

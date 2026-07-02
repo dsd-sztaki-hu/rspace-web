@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import type { ExportSelection } from "@/Export/common";
+import { I18nProvider } from "@/i18n/I18nContext";
 import Alerts from "../components/Alerts/Alerts";
 import Analytics from "../components/Analytics";
 import ExportDialog from "./ExportDialog";
@@ -25,17 +26,19 @@ const root = createRoot(domContainer);
 root.render(
   <QueryClientProvider client={queryClient}>
     <Alerts>
-      <ExportDialog
-        exportSelection={{
-          type: "selection",
-          exportTypes: [],
-          exportNames: [],
-          exportIds: [],
-        }}
-        open={false}
-        // @ts-expect-error RS is legacy
-        allowFileStores={RS.netFileStoresExportEnabled}
-      />
+      <I18nProvider>
+        <ExportDialog
+          exportSelection={{
+            type: "selection",
+            exportTypes: [],
+            exportNames: [],
+            exportIds: [],
+          }}
+          open={false}
+          // @ts-expect-error RS is legacy
+          allowFileStores={RS.netFileStoresExportEnabled}
+        />
+      </I18nProvider>
     </Alerts>
   </QueryClientProvider>,
 );
@@ -75,13 +78,15 @@ RS.exportModal = {
              * TODO 07022026: As we're introducing Suspense into ExportDialog itself, we need to design a Suspense
              * boundary by moving the Dialog components up a level.
              */}
-            <ExportDialog
-              // @ts-expect-error RS is legacy
-              exportSelection={adjustedSelection}
-              open={true}
-              // @ts-expect-error RS is legacy
-              allowFileStores={RS.netFileStoresExportEnabled}
-            />
+            <I18nProvider>
+              <ExportDialog
+                // @ts-expect-error RS is legacy
+                exportSelection={adjustedSelection}
+                open={true}
+                // @ts-expect-error RS is legacy
+                allowFileStores={RS.netFileStoresExportEnabled}
+              />
+            </I18nProvider>
           </Analytics>
         </Alerts>
       </QueryClientProvider>,
