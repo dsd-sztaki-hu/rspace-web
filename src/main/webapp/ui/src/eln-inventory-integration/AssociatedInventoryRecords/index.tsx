@@ -66,6 +66,7 @@ const AssociatedInventoryRecords = observer(function AssociatedInventoryRecords(
           {materialsStore.loading ? (
             <NoValue label={t("editor.eln-inventory-integration.associatedInventoryRecords.loadingLabel")} />
           ) : materialsStore.allInvRecordsFromAllDocumentLists.size === 0 ? (
+            // biome-ignore lint/complexity/noUselessFragments: fragment keeps the prop typed as ReactNode
             <>{t("editor.eln-inventory-integration.associatedInventoryRecords.theDocumentHasNoConnectedInventory")}</>
           ) : (
             materialsStore.allInvRecordsFromAllDocumentLists.map(({ name, globalId, permalinkURL }) => (
