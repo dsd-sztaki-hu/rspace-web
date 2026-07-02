@@ -195,7 +195,11 @@ function IntegrationCard<Credentials>({
                 // these are so that the focus ring is over the whole card, not
                 // just this inner button
                 color: "white",
+                cursor: "pointer",
                 outline: "0 !important",
+                "&.Mui-disabled": {
+                  cursor: "default",
+                },
               },
             },
           },
