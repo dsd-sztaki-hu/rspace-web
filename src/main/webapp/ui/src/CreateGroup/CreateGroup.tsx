@@ -14,6 +14,7 @@ import StyledEngineProvider from "@mui/styled-engine/StyledEngineProvider";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import axios from "@/common/axios";
+import { I18nProvider, useI18n } from "@/i18n/I18nContext";
 import materialTheme from "../theme";
 import Step1 from "./CreateGroupStep1";
 import Step2 from "./CreateGroupStep2";
@@ -245,7 +246,7 @@ class CreateGroup extends React.Component<any, any> {
   render() {
     const detailsComplete = this.detailsComplete();
     const loading = this.state.loading;
-
+    const { t, tNode } = useI18n();
     return (
       <div>
         <StyledEngineProvider injectFirst enableCssLayer>
@@ -256,7 +257,7 @@ class CreateGroup extends React.Component<any, any> {
               data-test-id="createGroupOpenButton"
               onClick={this.handleClickOpen}
             >
-              Create Group
+              {t("groups.createGroup.createGroup.createGroup")}
             </Button>
             <Dialog
               aria-labelledby="simple-dialog-title"
@@ -265,20 +266,23 @@ class CreateGroup extends React.Component<any, any> {
               data-test-id="createGroupModal"
             >
               <DialogTitle data-test-id="modalTitle">
-                Create group
-                <IconButton
-                  aria-label="Close"
-                  data-test-id="closeModal"
-                  sx={{
-                    position: "absolute",
-                    right: 0,
-                    top: 0,
-                    width: "auto",
-                  }}
-                  onClick={this.handleClose}
-                >
-                  <CloseIcon />
-                </IconButton>
+                {tNode("groups.createGroup.createGroup.createGroupText", {
+                  textIconButton: (
+                    <IconButton
+                      aria-label="Close"
+                      data-test-id="closeModal"
+                      sx={{
+                        position: "absolute",
+                        right: 0,
+                        top: 0,
+                        width: "auto",
+                      }}
+                      onClick={this.handleClose}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  ),
+                })}
               </DialogTitle>
               <Box sx={{ width: "600px" }}>{this.getStepContent(this.state.activeStep)}</Box>
               <Fade in={loading} unmountOnExit>
@@ -321,7 +325,7 @@ class CreateGroup extends React.Component<any, any> {
                     onClick={this.handleBack}
                     disabled={this.state.activeStep === 0}
                   >
-                    Back
+                    {t("groups.createGroup.createGroup.back")}
                   </Button>
                 }
               />
@@ -366,4 +370,8 @@ const domContainer = document.getElementById("createGroup");
 const selfService = $("#selfServiceLabGroup").length !== 0;
 const projectGroup = $("#projectGroup").length !== 0;
 const root = createRoot(domContainer as HTMLElement);
-root.render(<CreateGroup />);
+root.render(
+  <I18nProvider>
+    <CreateGroup />
+  </I18nProvider>,
+);

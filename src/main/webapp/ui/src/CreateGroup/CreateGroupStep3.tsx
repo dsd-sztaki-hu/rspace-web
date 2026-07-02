@@ -11,6 +11,7 @@ import EmailValidator from "email-validator";
 import React from "react";
 import Select from "react-select";
 import axios from "@/common/axios";
+import { useI18n } from "@/i18n/I18nContext";
 import materialTheme from "../theme";
 
 // biome-ignore lint/suspicious/noExplicitAny: initial biome migration
@@ -160,7 +161,7 @@ class createGroupStep3 extends React.Component<any, any> {
     const existingUsersDisplay = this.buildUserDisplay("existingUsers");
     const selfService = $("#selfServiceLabGroup").length !== 0;
     const newUsersDisplay = selfService ? false : this.buildUserDisplay("newUsers");
-
+    const { t } = useI18n();
     return (
       <Box sx={{ padding: "0 25px 10px 25px" }}>
         <StyledEngineProvider injectFirst enableCssLayer>
@@ -168,10 +169,13 @@ class createGroupStep3 extends React.Component<any, any> {
             <Grid container spacing={8}>
               <Grid size={6}>
                 <Paper sx={{ padding: "10px" }}>
-                  <h2>Invite RSpace users</h2>
+                  <h2>{t("groups.createGroup.createGroupStep3.inviteRspaceUsers")}</h2>
                   <Box sx={{ marginTop: "36.5px", paddingBottom: "6px" }} data-test-id="createGroupInviteMembers">
                     {" "}
-                    <p className="bootstrap-custom-flat"> type at least 3 characters</p>
+                    <p className="bootstrap-custom-flat">
+                      {" "}
+                      {t("groups.createGroup.createGroupStep3.typeAtLeast3Characters")}
+                    </p>
                     <Select
                       // biome-ignore lint/suspicious/noExplicitAny: initial biome migration
                       {...({ style: { marginTop: "36.5px", paddingBottom: "6px" } } as any)}
@@ -179,7 +183,7 @@ class createGroupStep3 extends React.Component<any, any> {
                       options={this.state.returnedUserList}
                       onInputChange={this.getCurrentUsers}
                       onChange={this.handleSelect}
-                      placeholder="Enter email address"
+                      placeholder={t("groups.createGroup.createGroupStep3.enterEmailAddressPlaceholder")}
                       classNamePrefix="seleniumTest"
                     />
                   </Box>
@@ -189,13 +193,13 @@ class createGroupStep3 extends React.Component<any, any> {
               {newUsersDisplay && (
                 <Grid size={6}>
                   <Paper sx={{ padding: "10px" }}>
-                    <h2>Invite new users</h2>
+                    <h2>{t("groups.createGroup.createGroupStep3.inviteNewUsers")}</h2>
                     <FormControl error aria-describedby="email-error-text">
                       <TextField
                         variant="standard"
                         data-test-id="createGroupInviteNewUsers"
                         error={!this.state.newUserEmailCheck}
-                        placeholder="Enter email address"
+                        placeholder={t("groups.createGroup.createGroupStep3.enterEmailAddressPlaceholder2")}
                         name="newUsers"
                         margin="normal"
                         onChange={this.emailValidation}
@@ -203,7 +207,9 @@ class createGroupStep3 extends React.Component<any, any> {
                         onKeyPress={this.handleEnter}
                       />
                       {!this.state.newUserEmailCheck && (
-                        <FormHelperText id="email-error-text">Please enter a valid email address</FormHelperText>
+                        <FormHelperText id="email-error-text">
+                          {t("groups.createGroup.createGroupStep3.pleaseEnterAValidEmailAddress")}
+                        </FormHelperText>
                       )}
                     </FormControl>
                     <Grid sx={{ overflow: "auto", maxHeight: "250px" }}>{newUsersDisplay}</Grid>

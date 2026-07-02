@@ -11,6 +11,7 @@ import EmailValidator from "email-validator";
 import React from "react";
 import CreatableSelect from "react-select/creatable";
 import axios from "@/common/axios";
+import { useI18n } from "@/i18n/I18nContext";
 import materialTheme from "../theme";
 
 // biome-ignore lint/suspicious/noExplicitAny: initial biome migration
@@ -127,13 +128,14 @@ class createGroupStep2 extends React.Component<any, any> {
   }
 
   render() {
+    const { t } = useI18n();
     return (
       <Box sx={{ padding: "0 25px 10px 25px" }}>
         <StyledEngineProvider injectFirst enableCssLayer>
           <ThemeProvider theme={materialTheme}>
-            <h3>Select PI</h3>
+            <h3>{t("groups.createGroup.createGroupStep2.selectPi")}</h3>
             <RadioGroup
-              aria-label="Pi Role"
+              aria-label={t("groups.createGroup.createGroupStep2.piRoleAriaLabel")}
               name="piRole"
               value={this.state.radioOptions.value}
               onChange={this.handleChange}
@@ -142,7 +144,7 @@ class createGroupStep2 extends React.Component<any, any> {
                 data-test-id="createGroupSelectSelfPI"
                 value={this.props.currentUser}
                 control={<Radio color="primary" />}
-                label="Make me the group PI and invite users"
+                label={t("groups.createGroup.createGroupStep2.makeMeTheGroupPiLabel")}
               />
               <FormControlLabel
                 data-test-id="createGroupSelectOtherPI"
@@ -150,10 +152,10 @@ class createGroupStep2 extends React.Component<any, any> {
                 control={<Radio color="primary" />}
                 label={
                   <span>
-                    Nominate a PI, make me Lab Admin, and supply users for pending invitations.
+                    {t("groups.createGroup.createGroupStep2.nominateAPiMakeMeLab")}
                     <br />
                     <Typography variant="inherit" component="em" sx={{ fontSize: "11px" }}>
-                      Note: group wont be created until PI accepts invitation
+                      {t("groups.createGroup.createGroupStep2.noteGroupWontBeCreatedUntil")}
                     </Typography>
                   </span>
                 }
@@ -161,7 +163,7 @@ class createGroupStep2 extends React.Component<any, any> {
             </RadioGroup>
             {this.state.radioOptions.displayNominate === true && (
               <div>
-                <p>Enter a single email address of a new or existing user to be asked to be group PI.</p>
+                <p>{t("groups.createGroup.createGroupStep2.enterASingleEmailAddressOf")}</p>
                 <FormControl
                   data-test-id="createGroupChoosePI"
                   error
@@ -173,7 +175,7 @@ class createGroupStep2 extends React.Component<any, any> {
                     onChange={this.handleSelect}
                     onInputChange={this.getCurrentUsers}
                     options={this.state.returnedUserList}
-                    placeholder="Start typing..."
+                    placeholder={t("groups.createGroup.createGroupStep2.startTypingPlaceholder")}
                     formatCreateLabel={(userInput) => `Select ${userInput}`}
                     defaultValue={{
                       value: this.props.radioDetails.selectedUser,
@@ -182,7 +184,9 @@ class createGroupStep2 extends React.Component<any, any> {
                     classNamePrefix="seleniumTest"
                   />
                   {!this.state.emailValidation && (
-                    <FormHelperText id="email-error-text">Please enter a valid email address</FormHelperText>
+                    <FormHelperText id="email-error-text">
+                      {t("groups.createGroup.createGroupStep2.pleaseEnterAValidEmailAddress")}
+                    </FormHelperText>
                   )}
                 </FormControl>
               </div>
