@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import { ThemeProvider } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import React from "react";
+import { useI18n } from "@/i18n/I18nContext";
 import { useApplicationVersionQuery } from "@/modules/common/queries/applicationVersion";
 import createAccentedTheme from "../../accentedTheme";
 import RSpaceLogo from "../../assets/branding/rspace/logo.svg";
@@ -40,7 +41,7 @@ function ApplicationVersion(): React.ReactElement {
 export function AboutRSpaceContent(): React.ReactElement {
   const deploymentDescription = useDeploymentProperty("deployment.description");
   const helpEmail = useDeploymentProperty("deployment.helpEmail");
-
+  const { t, tNode } = useI18n();
   return (
     <Stack sx={{ py: 2, alignItems: "center" }}>
       <Box
@@ -53,15 +54,15 @@ export function AboutRSpaceContent(): React.ReactElement {
           justifyContent: "center",
         }}
       >
-        <img src={RSpaceLogo} alt="RSpace Logo" />{" "}
+        <img src={RSpaceLogo} alt={t("ApplicationResources.appBar.aboutRSpaceDialog.rspaceLogoAlt")} />{" "}
       </Box>
 
       <Box sx={{ mb: 3 }}>
-        <ErrorBoundary message="Version unavailable">
+        <ErrorBoundary message={t("ApplicationResources.appBar.aboutRSpaceDialog.versionUnavailable")}>
           <React.Suspense
             fallback={
               <Typography variant="h6" gutterBottom color="textSecondary">
-                Loading version...
+                {t("ApplicationResources.appBar.aboutRSpaceDialog.loadingVersion")}
               </Typography>
             }
           >
@@ -86,7 +87,15 @@ export function AboutRSpaceContent(): React.ReactElement {
       })}
 
       <Typography variant="body2" align="center" color="textSecondary" gutterBottom>
-        For general support, email: <Link href="mailto:support@researchspace.com">support@researchspace.com</Link>
+        {tNode("ApplicationResources.appBar.aboutRSpaceDialog.forGeneralSupportEmailSupportResearchspace", {
+          supportResearchspaceComLink: (
+            <Link href="mailto:support@researchspace.com">
+              {t(
+                "ApplicationResources.appBar.aboutRSpaceDialog.forGeneralSupportEmailSupportResearchspace.supportResearchspaceComLink",
+              )}
+            </Link>
+          ),
+        })}
       </Typography>
 
       {FetchingData.match(helpEmail, {
@@ -96,7 +105,9 @@ export function AboutRSpaceContent(): React.ReactElement {
           if (typeof email === "string" && email.trim()) {
             return (
               <Typography variant="body2" align="center" color="textSecondary" gutterBottom>
-                For account and group queries, email: <Link href={`mailto:${email}`}>{email}</Link>
+                {tNode("ApplicationResources.appBar.aboutRSpaceDialog.forAccountAndGroupText", {
+                  textLink: <Link href={`mailto:${email}`}>{email}</Link>,
+                })}
               </Typography>
             );
           }
@@ -105,25 +116,25 @@ export function AboutRSpaceContent(): React.ReactElement {
       })}
 
       <Typography variant="body2" align="center" gutterBottom sx={{ mt: 3 }}>
-        RSpace is open-source, and powered by open-source libraries.
+        {t("ApplicationResources.appBar.aboutRSpaceDialog.rspaceIsOpenSourceAndPowered")}
         <br />
-        RSpace is licensed under AGPL.
+        {t("ApplicationResources.appBar.aboutRSpaceDialog.rspaceIsLicensedUnderAgpl")}
       </Typography>
       <Typography variant="caption" align="center" color="textSecondary">
-        © 2026 ResearchSpace
+        {t("ApplicationResources.appBar.aboutRSpaceDialog.2026Researchspace")}
       </Typography>
 
       <Box sx={{ mt: 2, mb: 3 }}>
         <Typography variant="body2" component="div">
           <Stack spacing={2} direction="row" sx={{ alignItems: "center" }}>
             <Link href="https://researchspace.com" target="_blank" rel="noreferrer">
-              Website
+              {t("ApplicationResources.appBar.aboutRSpaceDialog.website")}
             </Link>
             <Link href={docLinks.changelog} target="_blank" rel="noreferrer">
-              Changelog
+              {t("ApplicationResources.appBar.aboutRSpaceDialog.changelog")}
             </Link>
             <Link href="https://github.com/rspace-os" target="_blank" rel="noreferrer">
-              Source Code
+              {t("ApplicationResources.appBar.aboutRSpaceDialog.sourceCode")}
             </Link>
           </Stack>
         </Typography>
@@ -133,15 +144,16 @@ export function AboutRSpaceContent(): React.ReactElement {
 }
 
 export default function AboutRSpaceDialog({ open, onClose }: AboutRSpaceDialogProps): React.ReactElement {
+  const { t } = useI18n();
   return (
     <ThemeProvider theme={createAccentedTheme(ACCENT_COLOR)}>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogTitle>About RSpace</DialogTitle>
+        <DialogTitle>{t("ApplicationResources.appBar.aboutRSpaceDialog.aboutRspace")}</DialogTitle>
         <DialogContent>
           <AboutRSpaceContent />
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={onClose}>{t("ApplicationResources.appBar.aboutRSpaceDialog.close")}</Button>
         </DialogActions>
       </Dialog>
     </ThemeProvider>
