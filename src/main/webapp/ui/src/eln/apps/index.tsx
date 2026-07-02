@@ -4,6 +4,7 @@ import StyledEngineProvider from "@mui/styled-engine/StyledEngineProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { I18nProvider } from "@/i18n/I18nContext";
 import Alerts from "../../components/Alerts/Alerts";
 import Analytics from "../../components/Analytics";
 import ErrorBoundary from "../../components/ErrorBoundary";
@@ -59,11 +60,13 @@ window.addEventListener("load", () => {
             <CssBaseline />
             <QueryClientProvider client={queryClient}>
               <Analytics>
-                <ErrorBoundary>
-                  <Alerts>
-                    <App />
-                  </Alerts>
-                </ErrorBoundary>
+                <I18nProvider>
+                  <ErrorBoundary>
+                    <Alerts>
+                      <App />
+                    </Alerts>
+                  </ErrorBoundary>
+                </I18nProvider>
               </Analytics>
             </QueryClientProvider>
           </ThemeProvider>

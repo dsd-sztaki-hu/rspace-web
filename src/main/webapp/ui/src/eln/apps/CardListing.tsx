@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import DSW from "@/eln/apps/integrations/DSW";
 import RaidIntegrationCard from "@/eln/apps/integrations/Raid/RaidIntegrationCard";
+import { useI18n } from "@/i18n/I18nContext";
 import ApiDirect from "./integrations/ApiDirect";
 import Argos from "./integrations/Argos";
 import Box from "./integrations/Box";
@@ -53,6 +54,7 @@ type CardListingArgs = {
 };
 
 function CardListing({ mode, integrationStates }: CardListingArgs): React.ReactNode {
+  const { t } = useI18n();
   const { update } = useIntegrationsEndpoint();
 
   /*
@@ -326,7 +328,7 @@ function CardListing({ mode, integrationStates }: CardListingArgs): React.ReactN
       .map((s) => s.mode)
       .filter((m) => m === mode).length === 0
   ) {
-    return <Typography variant="body1">Nothing here!</Typography>;
+    return <Typography variant="body1">{t("apps.eln.apps.cardListing.nothingHere")}</Typography>;
   }
 
   /*

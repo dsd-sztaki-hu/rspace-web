@@ -12,6 +12,7 @@ import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import type React from "react";
 import { useContext, useEffect, useState } from "react";
+import { useI18n } from "@/i18n/I18nContext";
 import createAccentedTheme from "../../accentedTheme";
 import { ACCENT_COLOR } from "../../assets/branding/rspace/other";
 import docLinks from "../../assets/DocLinks";
@@ -68,13 +69,14 @@ function LoadingSkeleton() {
 }
 
 function ErrorMessage() {
+  const { t } = useI18n();
   return (
     <Alert severity="error">
-      Something went wrong! Please refresh the page. If this error persists, please contact{" "}
+      {t("apps.eln.apps.app.somethingWentWrongPleaseRefreshThe")}{" "}
       <a href="mailto:support@researchspace.com" rel="noreferrer" target="_blank">
-        support@researchspace.com
+        {t("apps.eln.apps.app.supportResearchspaceCom")}
       </a>{" "}
-      with details of when the issue happens.
+      {t("apps.eln.apps.app.withDetailsOfWhenTheIssue")}
     </Alert>
   );
 }
@@ -148,7 +150,7 @@ function App(): React.ReactNode {
       }
     })();
   }, []);
-
+  const { t } = useI18n();
   return (
     <>
       <GoogleLoginProvider />
@@ -192,60 +194,39 @@ function App(): React.ReactNode {
               }}
             >
               <Box sx={{ my: 4 }}>
-                <Typography variant="h1">Apps</Typography>
+                <Typography variant="h1">{t("apps.eln.apps.app.apps")}</Typography>
                 <Typography variant="body1">
-                  RSpace provides integrations with various third-party apps that enable extra features. Apps need to be
-                  enabled to work, and some require authentication.{" "}
+                  {t("apps.eln.apps.app.rspaceProvidesIntegrationsWithVariousThird")}{" "}
                   <Link href={docLinks.appsIntroduction} target="_blank" rel="noreferrer">
-                    See Apps Introduction to learn more.
+                    {t("apps.eln.apps.app.seeAppsIntroductionToLearnMore")}
                   </Link>
                 </Typography>
                 <Stack spacing={6} sx={{ mt: 1 }}>
                   <AppsSection
                     id="enabled"
-                    title="Enabled"
-                    description={
-                      <>
-                        The following Apps are enabled on this account. Click on an App card to modify or disable the
-                        integration.
-                      </>
-                    }
+                    title={t("apps.eln.apps.app.enabledTitle")}
+                    description={t("apps.eln.apps.app.theFollowingAppsAreEnabledOn")}
                     mode="ENABLED"
                     allStates={allStates}
                   />
                   <AppsSection
                     id="disabled"
-                    title="Disabled"
-                    description={
-                      <>
-                        The following Apps are not currently enabled on this account. Click on an App card for setup
-                        instructions on how to enable the integration.
-                      </>
-                    }
+                    title={t("apps.eln.apps.app.disabledTitle")}
+                    description={t("apps.eln.apps.app.theFollowingAppsAreNotCurrently")}
                     mode="DISABLED"
                     allStates={allStates}
                   />
                   <AppsSection
                     id="unavailable"
-                    title="Unavailable"
-                    description={
-                      <>
-                        The following Apps need to be enabled by your System Administrator before they can be used;
-                        please get in touch with them directly to set this up.
-                      </>
-                    }
+                    title={t("apps.eln.apps.app.unavailableTitle")}
+                    description={t("apps.eln.apps.app.theFollowingAppsNeedToBe")}
                     mode="UNAVAILABLE"
                     allStates={allStates}
                   />
                   <AppsSection
                     id="third-party-rspace-integrations"
-                    title="Third-party RSpace Integrations"
-                    description={
-                      <>
-                        These RSpace applications have been built by partners or other external software developers.
-                        Note, ResearchSpace does not provide direct support for these integrations.
-                      </>
-                    }
+                    title={t("apps.eln.apps.app.thirdPartyRspaceIntegrationsTitle")}
+                    description={t("apps.eln.apps.app.theseRspaceApplicationsHaveBeenBuilt")}
                     mode="EXTERNAL"
                     allStates={allStates}
                   />

@@ -19,6 +19,7 @@ import Typography, { typographyClasses } from "@mui/material/Typography";
 import { observer } from "mobx-react-lite";
 import type React from "react";
 import { useContext, useState } from "react";
+import { useI18n } from "@/i18n/I18nContext";
 import type { Hsl } from "../../accentedTheme";
 import docLinks from "../../assets/DocLinks";
 import { Dialog } from "../../components/DialogBoundary";
@@ -122,6 +123,7 @@ function IntegrationCard<Credentials>({
   const mode = integrationState.mode;
   const theme = useTheme();
   const { trackEvent } = useContext(AnalyticsContext);
+  const { t, tNode } = useI18n();
 
   const cardMediaWrapperSx = {
     borderRadius: theme.spacing(0.75),
@@ -453,20 +455,23 @@ function IntegrationCard<Credentials>({
               <Typography variant="body2">{usageText}</Typography>
               {typeof website === "string" ? (
                 <Typography variant="body2">
-                  See <Link href={website.startsWith("/") ? website : `https://${website}`}>{website}</Link>
-                  {" and our "}
-                  <Link href={docLinks[docLink]}>{helpLinkText}</Link> for more.
+                  {tNode("apps.eln.apps.integrationCard.seeWebsiteAndDocsForMore", {
+                    websiteLink: <Link href={website.startsWith("/") ? website : `https://${website}`}>{website}</Link>,
+                    docsLink: <Link href={docLinks[docLink]}>{helpLinkText}</Link>,
+                  })}
                 </Typography>
               ) : (
                 <Typography variant="body2">
-                  See our <Link href={docLinks[docLink]}>{helpLinkText}</Link> for more.
+                  {tNode("apps.eln.apps.integrationCard.seeDocsForMore", {
+                    docsLink: <Link href={docLinks[docLink]}>{helpLinkText}</Link>,
+                  })}
                 </Typography>
               )}
             </section>
             <Divider orientation="horizontal" sx={{ gap: 0 }} />
             <section>
               <Typography variant="subtitle1" component="h4">
-                Setup
+                {t("apps.eln.apps.integrationCard.setup")}
               </Typography>
               {setupSection}
             </section>
@@ -478,7 +483,7 @@ function IntegrationCard<Credentials>({
               setOpen(false);
             }}
           >
-            Close
+            {t("apps.eln.apps.integrationCard.close")}
           </Button>
           {integrationState.mode !== "EXTERNAL" && (
             <Button
@@ -490,7 +495,9 @@ function IntegrationCard<Credentials>({
                 }
               }}
             >
-              {mode === "ENABLED" ? "DISABLE" : "ENABLE"}
+              {mode === "ENABLED"
+                ? t("apps.eln.apps.integrationCard.disable")
+                : t("apps.eln.apps.integrationCard.enable")}
             </Button>
           )}
         </DialogActions>
