@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Analytics from "@/components/Analytics";
 import { MuiCssLayerProvider } from "@/components/MuiCssLayerProvider";
+import { I18nProvider, useI18n } from "@/i18n/I18nContext";
 import AnalyticsContext from "@/stores/contexts/Analytics";
 import type { ElnDocumentId } from "@/stores/models/MaterialsModel";
 import NoValue from "../../components/NoValue";
@@ -19,7 +20,7 @@ const AssociatedInventoryRecords = observer(function AssociatedInventoryRecords(
   const { trackEvent } = React.useContext(AnalyticsContext);
   const { materialsStore } = useStores();
   const [open, setOpen] = useState(false);
-
+  const { t } = useI18n();
   useEffect(() => {
     if (open) {
       void materialsStore.getDocumentMaterialsListings(elnDocumentId);
@@ -58,14 +59,14 @@ const AssociatedInventoryRecords = observer(function AssociatedInventoryRecords(
         }}
         className="btn btn-primary"
       >
-        Inventory Items
+        {t("editor.eln-inventory-integration.associatedInventoryRecords.inventoryItems")}
       </button>
       <Collapse in={open}>
         <ul>
           {materialsStore.loading ? (
-            <NoValue label="Loading" />
+            <NoValue label={t("editor.eln-inventory-integration.associatedInventoryRecords.loadingLabel")} />
           ) : materialsStore.allInvRecordsFromAllDocumentLists.size === 0 ? (
-            <>The document has no connected Inventory items.</>
+            <>{t("editor.eln-inventory-integration.associatedInventoryRecords.theDocumentHasNoConnectedInventory")}</>
           ) : (
             materialsStore.allInvRecordsFromAllDocumentLists.map(({ name, globalId, permalinkURL }) => (
               <li key={globalId}>
@@ -84,9 +85,11 @@ if (wrapperDiv) {
   const root = createRoot(wrapperDiv);
   root.render(
     <Analytics>
-      <MuiCssLayerProvider>
-        <AssociatedInventoryRecords elnDocumentId={parseInt(wrapperDiv.dataset.documentid || "0", 10)} />
-      </MuiCssLayerProvider>
+      <I18nProvider>
+        <MuiCssLayerProvider>
+          <AssociatedInventoryRecords elnDocumentId={parseInt(wrapperDiv.dataset.documentid || "0", 10)} />
+        </MuiCssLayerProvider>
+      </I18nProvider>
     </Analytics>,
   );
 }
