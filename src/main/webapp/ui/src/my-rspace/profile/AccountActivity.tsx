@@ -10,18 +10,21 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import axios from "@/common/axios";
 import TimeAgoCustom from "@/components/TimeAgoCustom";
+import { I18nProvider, useI18n } from "@/i18n/I18nContext";
 import EnhancedTableHead from "../../components/EnhancedTableHead";
 import materialTheme from "../../theme";
 import { getSorting } from "../../util/table";
 import type { Order } from "../../util/types";
 
-const headCells = [
-  { id: "eventType", numeric: false, label: "Action" },
-  { id: "timestamp", numeric: true, label: "Time" },
-];
+//TODO
 
 // biome-ignore lint/suspicious/noExplicitAny: initial biome migration
 export default function AccountActivity(props: any) {
+  const { t } = useI18n();
+  const headCells = [
+    { id: "eventType", numeric: false, label: t("system.my-rspace.profile.accountActivity.actionHeader") },
+    { id: "timestamp", numeric: true, label: t("system.my-rspace.profile.accountActivity.timeHeader") },
+  ];
   const [fetched, setFetched] = React.useState(false);
   // biome-ignore lint/suspicious/noExplicitAny: initial biome migration
   const [activities, setActivities] = React.useState<any[] | null>([]);
@@ -58,13 +61,13 @@ export default function AccountActivity(props: any) {
         <Box sx={{ width: "690px", padding: "0px 15px" }}>
           {!fetched && (
             <Button color="primary" onClick={loadUserActivity}>
-              Show account activity
+              {t("system.my-rspace.profile.accountActivity.showAccountActivity")}
             </Button>
           )}
           {fetched && (
             <>
               <Box className="api-menu__header" sx={{ marginTop: "15px" }}>
-                User's account activity
+                {t("system.my-rspace.profile.accountActivity.usersAccountActivity")}
               </Box>
               <br />
               <Table>
@@ -106,5 +109,9 @@ const domContainer = document.getElementById("account-activity");
 
 if (domContainer) {
   const root = createRoot(domContainer);
-  root.render(<AccountActivity userId={domContainer.dataset.userid} />);
+  root.render(
+    <I18nProvider>
+      <AccountActivity userId={domContainer.dataset.userid} />
+    </I18nProvider>,
+  );
 }
